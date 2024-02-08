@@ -5,8 +5,10 @@ import { headers } from "next/headers";
 import FastGeoip from "doc999tor-fast-geoip";
 
 export default async function Home() {
-  const ip = headers().get('x-forwarded-for');
-  const country = (await FastGeoip.lookup(ip))?.country || "unknown";
+  const ip = headers().get('x-forwarded-for') || "unknown";
+  const country = (ip === "unknown" ? "unknown" : (
+    (await FastGeoip.lookup(ip))?.country || "unknown"
+  ));
   return (
     <main className={styles.main}>
       <div className={styles.description}>
