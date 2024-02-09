@@ -1,21 +1,18 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-
 import { headers } from "next/headers";
-import FastGeoip from "doc999tor-fast-geoip"
-
 import IpAddressLord from "@/components/IpAddressLord"
+import getGeoipInfo from "@/utils/geoip";
+import { NextRequest, NextResponse } from "next/server";
 
 export default async function Home() {
   const ip = headers().get('x-forwarded-for') || "unknown";
-  const country = (ip === "unknown" ? "unknown" : (
-    (await FastGeoip.lookup(ip))?.country || "unknown"
-  ));
+  const country = (await getGeoipInfo(ip)).country;
+  const countryByVercel = headers().get('x-lng') || "unknown to Vercel";
+
   return (
     <main>
       <div>
         <p>
-          IP address: {ip} ; country: {country}
+          IP address: {ip} ; country: {country} ; country detected by Vercel: {countryByVercel}
         </p>
         <IpAddressLord />
       </div>
